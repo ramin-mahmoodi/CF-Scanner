@@ -1,6 +1,7 @@
 package task
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/json"
 	"errors"
@@ -167,7 +168,7 @@ func ParseToXrayConfig(uri string, localPort int) (*XrayConfig, error) {
 	return cfg, nil
 }
 
-func TestRealDelay(uri string) (int, error) {
+func TestRealDelay(ctx context.Context, uri string) (int, error) {
 	if _, err := os.Stat("xray.exe"); os.IsNotExist(err) {
 		return -1, errors.New("xray.exe not found")
 	}
@@ -196,7 +197,7 @@ func TestRealDelay(uri string) (int, error) {
 		xrayName = "xray.exe"
 	}
 	xrayPath := filepath.Join(cwd, xrayName)
-	cmd := exec.Command(xrayPath, "run", "-config", tmpFile)
+	cmd := exec.CommandContext(ctx, xrayPath, "run", "-config", tmpFile)
 	hideWindow(cmd)
 	if err := cmd.Start(); err != nil {
 		return -1, err
@@ -206,8 +207,12 @@ func TestRealDelay(uri string) (int, error) {
 		cmd.Wait()
 	}()
 
-	// Wait a bit for xray to start
-	time.Sleep(500 * time.Millisecond)
+	// Wait a bit for xray to start, but respect context
+	select {
+	case <-time.After(500 * time.Millisecond):
+	case <-ctx.Done():
+		return -1, ctx.Err()
+	}
 
 	proxyUrl, _ := url.Parse(fmt.Sprintf("socks5://127.0.0.1:%d", port))
 	transport := &http.Transport{
@@ -224,10 +229,12 @@ func TestRealDelay(uri string) (int, error) {
 	}
 
 	// First request to warm up the connection (TCP handshake, TLS etc)
-	client.Get("https://www.google.com/generate_204")
+	req1, _ := http.NewRequestWithContext(ctx, "GET", "https://www.google.com/generate_204", nil)
+	client.Do(req1)
 
 	start := time.Now()
-	resp, err := client.Get("https://www.google.com/generate_204")
+	req2, _ := http.NewRequestWithContext(ctx, "GET", "https://www.google.com/generate_204", nil)
+	resp, err := client.Do(req2)
 	if err != nil {
 		return -1, err
 	}

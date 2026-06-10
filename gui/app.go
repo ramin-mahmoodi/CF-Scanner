@@ -377,6 +377,15 @@ func Start() {
 
 	buildUI()
 
+	fyneWin.SetCloseIntercept(func() {
+		if utils.CancelFunc != nil {
+			utils.CancelFunc()
+		}
+		// Brief pause to allow graceful shutdown of child processes
+		time.Sleep(100 * time.Millisecond)
+		fyneWin.Close()
+	})
+
 	fyneWin.CenterOnScreen()
 	fyneWin.ShowAndRun()
 }
@@ -1506,6 +1515,7 @@ func startXrayTest() {
 	}
 
 	setStopButton()
+	utils.CancelCtx, utils.CancelFunc = context.WithCancel(context.Background())
 
 	statusBinding.Set("Testing Real Delay with Xray...")
 	statusIcon.SetResource(theme.SearchIcon())
@@ -1545,7 +1555,7 @@ func startXrayTest() {
 			var delay int
 			var testErr error
 			for attempt := 0; attempt < 2; attempt++ {
-				delay, testErr = task.TestRealDelay(xrayTableData[index].Config)
+				delay, testErr = task.TestRealDelay(utils.CancelCtx, xrayTableData[index].Config)
 				if testErr == nil {
 					break
 				}
