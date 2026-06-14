@@ -48,6 +48,7 @@ var (
 	progressBinding binding.Float
 	statusBinding   binding.String
 	resultsData     []utils.CloudflareIPData
+	resultsMutex    sync.RWMutex
 	isRunning       bool
 	isDarkTheme     bool = true
 
@@ -146,6 +147,9 @@ func refreshDataVBox() {
 	}
 
 	headers := []string{T("col_ip"), T("col_sent"), T("col_recv"), T("col_loss"), T("col_delay"), T("col_jitter"), T("col_score"), T("col_colo")}
+
+	resultsMutex.RLock()
+	defer resultsMutex.RUnlock()
 
 	// Recycle existing objects if length matches (avoids lag during scan and sorting)
 	if len(dataVBox.Objects) > 0 && len(dataVBox.Objects) == len(resultsData)+1 {
@@ -367,7 +371,9 @@ func Start() {
 	}
 
 	utils.GuiLiveCallback = func(data utils.CloudflareIPData) {
+		resultsMutex.Lock()
 		resultsData = append(resultsData, data)
+		resultsMutex.Unlock()
 		throttleRefresh()
 	}
 
@@ -677,6 +683,9 @@ func sortXrayData(col int) {
 }
 
 func sortResultsData(col int) {
+	resultsMutex.Lock()
+	defer resultsMutex.Unlock()
+
 	if lastSortCol == col {
 		sortAsc = !sortAsc
 	} else {
@@ -1049,7 +1058,9 @@ func startTest() {
 	switchTab(1)
 
 	utils.CancelCtx, utils.CancelFunc = context.WithCancel(context.Background())
+	resultsMutex.Lock()
 	resultsData = make([]utils.CloudflareIPData, 0)
+	resultsMutex.Unlock()
 	refreshDataVBox()
 
 	task.Routines, _ = strconv.Atoi(inputThreads.Text)
@@ -1111,7 +1122,9 @@ func startTest() {
 			return
 		}
 
+		resultsMutex.Lock()
 		resultsData = pingSet
+		resultsMutex.Unlock()
 		refreshDataVBox()
 
 		statusBinding.Set(T("status_done"))
@@ -1184,6 +1197,9 @@ func buildExportUI() {
 }
 
 func generateConfigs() {
+	resultsMutex.RLock()
+	defer resultsMutex.RUnlock()
+
 	count, _ := strconv.Atoi(inputExportCount.Text)
 	if count <= 0 {
 		count = 5
