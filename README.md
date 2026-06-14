@@ -12,11 +12,11 @@
 <a id="english"></a>
 ## 🇬🇧 English
 
-A modern, fast, and feature-rich graphical user interface for scanning Cloudflare IPs, testing download speeds, and evaluating real-world proxy delays using Xray core. Built entirely in Go and Fyne.
+A modern, fast, and feature-rich graphical user interface for scanning Cloudflare IPs, testing connection latency, and evaluating real-world proxy delays using Xray core. Built entirely in Go and Fyne.
 
 ### ✨ Features
 - **Dynamic IP Scanning**: Automatically fetch the latest Cloudflare IPv4 subnets and scan them for alive endpoints.
-- **Latency & Speed Testing**: Test TCP ping latency and real HTTP download speeds.
+- **Latency Testing**: Test TCP ping and real HTTP latency for precise connectivity assessment.
 - **Xray Core Integration**: Evaluate actual connection delays using `Xray-core` directly from the UI.
 - **Bilingual Interface**: Seamlessly switch between English and Persian (RTL) interfaces dynamically.
 - **Modern UI**: Clean, responsive, and beautiful design with both light and dark themes.
@@ -34,11 +34,11 @@ A modern, fast, and feature-rich graphical user interface for scanning Cloudflar
 <a id="فارسی"></a>
 ## 🇮🇷 فارسی
 
-یک رابط کاربری گرافیکی مدرن، سریع و پرامکانات برای اسکن آی‌پی‌های کلودفلر، تست سرعت دانلود و ارزیابی تاخیر واقعی با استفاده از هسته Xray. این برنامه کاملاً با زبان Go و فریم‌ورک Fyne ساخته شده است.
+یک رابط کاربری گرافیکی مدرن، سریع و پرامکانات برای اسکن آی‌پی‌های کلودفلر، تست پینگ (TCP/HTTP) و ارزیابی تاخیر واقعی با استفاده از هسته Xray. این برنامه کاملاً با زبان Go و فریم‌ورک Fyne ساخته شده است.
 
 ### ✨ ویژگی‌ها
 - **اسکن پویای آی‌پی‌ها**: دریافت خودکار جدیدترین ساب‌نت‌های کلودفلر و اسکن آن‌ها.
-- **تست پینگ و سرعت**: تست پینگ با پروتکل TCP و ارزیابی سرعت واقعی دانلود با HTTP.
+- **تست تاخیر و پینگ**: اندازه‌گیری دقیق پینگ با پروتکل TCP و تاخیر پاسخ‌دهی در بستر HTTP.
 - **پشتیبانی از Xray**: ارزیابی پینگ واقعی (Real Delay) کانفیگ‌ها به کمک `Xray-core` از داخل خود برنامه.
 - **رابط کاربری دوزبانه**: قابلیت تغییر لحظه‌ای زبان برنامه بین انگلیسی و فارسی (با چیدمان راست‌چین).
 - **طراحی مدرن**: رابط کاربری تمیز و واکنش‌گرا (Responsive) با پشتیبانی از حالت‌های تاریک و روشن (Dark/Light Mode).
@@ -47,7 +47,7 @@ A modern, fast, and feature-rich graphical user interface for scanning Cloudflar
 ### 🛠 راهنمای استفاده
 ۱. برنامه را باز کنید.
 ۲. ساب‌نت‌های آی‌پی مورد نظرتان را انتخاب کرده یا آی‌پی‌های دلخواه خود را وارد کنید.
-۳. روی دکمه "شروع تست" کلیک کنید تا اسکن پینگ و سرعت آغاز شود.
+۳. روی دکمه "شروع تست" کلیک کنید تا اسکن پینگ و تاخیر آغاز شود.
 ۴. برای تست دقیق‌تر، به تب **Xray** بروید، کانفیگ خود را قرار دهید و تاخیر واقعی را ارزیابی کنید.
 ۵. بهترین کانفیگ‌های خروجی را مستقیماً کپی کرده یا در یک فایل ذخیره کنید!
 
